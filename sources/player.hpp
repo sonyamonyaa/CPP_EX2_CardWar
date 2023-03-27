@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -9,16 +10,16 @@ using namespace std;
 
 namespace ariel
 {
-    Class Player {
+    class Player {
 
         private:
             string name;
             int stack_size;
             int cards_taken;
-            boolean playing
+            bool playing;
             //add stack?
         public:
-            Player (const string& n): name(n), stack_size(0), cards_taken(0)
+            Player (const string& n): name(n), stack_size(0), cards_taken(0), playing(false){}
 
             int stacksize() const{
                 return stack_size;
@@ -27,4 +28,5 @@ namespace ariel
             int cardesTaken() const{
                 return cards_taken;
             }
-    }
+    };
+}

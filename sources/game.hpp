@@ -8,7 +8,7 @@
 using namespace std;
 
 namespace ariel {
-    Class Game {
+    class Game {
         private:
             Player p1;
             Player p2;
@@ -18,14 +18,15 @@ namespace ariel {
             int draw_rate;
             int draw_count;
             int cards_won;
-            string winner;
         
         public:
-            Game(Player &p1, Player &p2): this.p1(p1), this.p2(p2);
+            Game(Player &player1, Player &player2): p1(player1), p2(player2), win_rate(0), draw_rate(0), draw_count(0), cards_won(0) {};
             
-            playAll(); 
-            printWiner(); 
-            printLog(); 
-            printStats();
-    }
+            void printLastTurn();
+            void playTurn();
+            void playAll(); 
+            void printWiner(); 
+            void printLog(); 
+            void printStats();
+    };
 }
