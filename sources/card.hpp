@@ -5,6 +5,9 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
+
+#define STACK_SIZE 52
 
 using namespace std;
 //enums for easier printing
@@ -15,9 +18,17 @@ namespace ariel
     class Card {
 
         private:
-            const Suits _suit;
-            const Ranks _rank;
+            Suits _suit;
+            Ranks _rank;
+
         public:
-            Card(Suits suit, Ranks rank): _suit(suit), _rank(rank){}
+            Card(){}
+            ~Card(){}
+            Card(int suit, int rank): _suit((Suits)suit), _rank((Ranks)rank){}
+            
+            int getSuit() {return _suit;}
+            int getRank() {return _rank;}
+            string CardToStr();
+            vector<Card> getNewStack();
     };
 }
