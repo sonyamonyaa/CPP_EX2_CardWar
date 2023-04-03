@@ -19,6 +19,12 @@ TEST_CASE("Test 1 - Initialize Game")
     CHECK(p2.stacksize() == 26);
     CHECK(p1.cardesTaken() == 0);
     CHECK(p2.cardesTaken() == 0);
+
+    //game hasn't had a turn yet
+    CHECK_THROWS(game.printLastTurn());
+    CHECK_THROWS(game.printLog());
+    CHECK_THROWS(game.printStats());
+    CHECK_THROWS(game.printWiner());
 }
 
 TEST_CASE("Test 2 - Finish Game")
@@ -31,8 +37,13 @@ TEST_CASE("Test 2 - Finish Game")
     game.playAll();
 
     CHECK((p1.stacksize() == 0 || p2.stacksize() == 0));
-    CHECK((p1.cardesTaken() == 52 || p2.cardesTaken() == 52));
-    CHECK(((p1.stacksize() == 0 && p2.cardesTaken() == 52) || (p2.stacksize() == 0 && p1.cardesTaken() == 52)));
+    CHECK((p1.cardesTaken() + p2.cardesTaken() == 52));
+    
+    //all functions should work
+    CHECK_NOTHROW(game.printLastTurn());
+    CHECK_NOTHROW(game.printLog());
+    CHECK_NOTHROW(game.printStats());
+    CHECK_NOTHROW(game.printWiner());
 
     // play in same game after it finished sould be impossible
     CHECK_THROWS(game.playTurn());
@@ -87,4 +98,8 @@ TEST_CASE("Test 5 - another game") //if a game ends, we should be able to make a
     CHECK(p2.stacksize() == 26);
     CHECK(p1.cardesTaken() == 0);
     CHECK(p2.cardesTaken() == 0);  
+}
+
+TEST_CASE("Bonus Test - Expectation"){
+    
 }
