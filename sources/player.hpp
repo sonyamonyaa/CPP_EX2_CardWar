@@ -10,23 +10,45 @@ using namespace std;
 
 namespace ariel
 {
-    class Player {
+    class Player
+    {
 
-        private:
-            string name;
-            int stack_size;
-            int cards_taken;
-            bool playing;
-            //add stack?
-        public:
-            Player (const string& n): name(n), stack_size(0), cards_taken(0), playing(false){}
+    private:
+        string name;
+        int stack_size;
+        int cards_taken;
+        bool playing;
+        unsigned int deck; // place in deck
+    public:
+        Player(const string &n) : name(n), stack_size(0), cards_taken(0), playing(false), deck(0) {}
 
-            int stacksize() const{
-                return stack_size;
-            }
+        string getName() { return name; }
+        void setPlaying(bool plays) { playing = plays; }
 
-            int cardesTaken() const{
-                return cards_taken;
-            }
+        void setDeck(unsigned int place)
+        {
+            stack_size = 26;
+            deck = place;
+        }
+
+        int stacksize() const
+        {
+            return stack_size;
+        }
+
+        int cardesTaken() const
+        {
+            return cards_taken;
+        }
+
+        void takeCards(int cards) { cards_taken += cards; }
+
+        Card takeOutCard(vector<Card> &cardStack, unsigned int turn)
+        {
+            stack_size-=1;  
+            size_t index = turn + deck;
+            return cardStack.at(index);
+        }
+        string moveDesc(Card &card);
     };
 }

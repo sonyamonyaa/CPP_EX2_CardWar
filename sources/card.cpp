@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <algorithm>
+
 #include "card.hpp"
 
 using namespace std;
@@ -53,6 +55,26 @@ string ariel::Card::CardToStr()
     return str;
 }
 
+int ariel::Card::compare(Card card)
+{
+    int thisRank = this->getRank();
+    int otherRank = card.getRank();
+
+    if (thisRank == otherRank)
+    {
+        return Moves::draw;
+    }
+
+    bool loss = ((otherRank == Ranks::Ace)                              // Ace wins all
+                 || (thisRank == Ranks::Ace && otherRank == Ranks::two) // except 2
+                 || (thisRank < otherRank && thisRank != Ranks::Ace));  // rest of ranks are by who's bigger
+
+    if (loss)
+        return Moves::lose;
+    else
+        return Moves::win;
+}
+
 vector<Card> createStack()
 {
     vector<Card> cardStack;
@@ -63,7 +85,7 @@ vector<Card> createStack()
     {
         for (int s = 0; s < suits_len; s++)
         {
-            cardStack.push_back(Card(s, r));
+            cardStack.push_back(Card((Suits)s, (Ranks)r));
         }
     }
 
@@ -72,19 +94,13 @@ vector<Card> createStack()
 
 void shuffleStack(vector<Card> cardStack)
 {
-    // used the code in here - https://www.geeksforgeeks.org/shuffle-a-deck-of-cards-3/
+    // reference - https://cplusplus.com/reference/algorithm/random_shuffle//
     srand(time(0)); //  Initialize seed randomly
-
-    for (int i = 0; i < STACK_SIZE; i++)
-    {
-        // Random for remaining positions.
-        int r = i + (rand() % (STACK_SIZE - i));
-
-        swap(cardStack[i], cardStack[r]);
-    }
+    random_shuffle(cardStack.begin(), cardStack.end());
 }
 
-vector<Card> ariel::Card::getNewStack(){
+vector<Card> ariel::Card::getNewStack()
+{
     vector<Card> cardStack = createStack();
     shuffleStack(cardStack);
     return cardStack;

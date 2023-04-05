@@ -9,4 +9,7 @@ using namespace std;
 
 using namespace ariel;
 
-// ariel::Player Player(){};
+string ariel::Player::moveDesc(Card &card){
+    string str = this->getName() + " takes out " + card.CardToStr();
+    return str;
+}
