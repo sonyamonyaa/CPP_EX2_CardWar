@@ -92,7 +92,7 @@ vector<Card> createStack()
     return cardStack;
 }
 
-void shuffleStack(vector<Card> cardStack)
+void shuffleStack(vector<Card> &cardStack)
 {
     // reference - https://cplusplus.com/reference/algorithm/random_shuffle//
     srand(time(0)); //  Initialize seed randomly

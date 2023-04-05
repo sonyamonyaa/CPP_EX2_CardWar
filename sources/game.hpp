@@ -16,8 +16,8 @@ namespace ariel
     class Game
     {
     private:
-        Player p1;
-        Player p2;
+        Player& p1;
+        Player& p2;
         vector<Card> cardStack;
         string last_turn;
         string log;
@@ -41,6 +41,9 @@ namespace ariel
             // split to decks - with index
             p1.setDeck(0);
             p2.setDeck(MAX_MOVE);
+            
+            p1.setStackSize(MAX_MOVE);
+            p2.setStackSize(MAX_MOVE);
         }
         void setLog(string const &str)
         {
@@ -64,6 +67,7 @@ namespace ariel
 
         string getStats(); //assist func for stats
         int MakeMove(unsigned int turn, string &curr_log); // assist func for making a move in a turn
+        bool isFinished() const{return moves >= MAX_MOVE;}
         void printLastTurn();
         void playTurn();
         void playAll();

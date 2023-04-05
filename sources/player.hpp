@@ -27,8 +27,10 @@ namespace ariel
 
         void setDeck(unsigned int place)
         {
-            stack_size = 26;
             deck = place;
+        }
+        void setStackSize(int size){
+            stack_size = size;
         }
 
         int stacksize() const

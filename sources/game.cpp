@@ -11,6 +11,12 @@ using namespace std;
 
 using namespace ariel;
 
+void throwFinished()
+{
+    throw string{
+        "Game finished"};
+}
+
 int ariel::Game::MakeMove(unsigned int turn, string &curr_log)
 {
     ariel::Card card1 = this->p1.takeOutCard(this->cardStack, turn);
@@ -22,6 +28,8 @@ int ariel::Game::MakeMove(unsigned int turn, string &curr_log)
 
 void ariel::Game::playTurn()
 {
+    if (this->isFinished())
+        throwFinished();
     int turn = this->getCurrTurn();
     int move = 0;
     int win_deck = 0;
@@ -29,12 +37,13 @@ void ariel::Game::playTurn()
     // each player takes out a card
     int res = MakeMove((unsigned int)turn, curr_log);
     move++;
-    while (res == Moves::draw && turn + this->getMoves() < MAX_MOVE)
+    while (res == Moves::draw && (move + this->getMoves()) < MAX_MOVE)
     {
-        curr_log += "Draw \n";
+        curr_log += "\nDraw \n";
         win_deck += 2;
-        res = MakeMove((unsigned int)move + 1, curr_log);
         this->setDrawCount();
+        move++;
+        res = MakeMove((unsigned int)move, curr_log);
     }
     if (res == Moves::win)
     { // p1 wins
@@ -64,30 +73,44 @@ void ariel::Game::playTurn()
 
 void ariel::Game::playAll()
 {
+    if (this->isFinished())
+        throwFinished();
     while (this->getMoves() < 26)
         playTurn();
 }
 
-void ariel::Game::printLastTurn() { cout << "LAST TURN \t" + this->getLastTurn() << endl; }
+void ariel::Game::printLastTurn() { std::cout << "LAST TURN \t" + this->getLastTurn() << endl; }
 void ariel::Game::printWiner()
 {
     // TO DO: throw if game not finished
+    // if (!(this->isFinished()))
+    // {
+    //     throw string{"Game hasn't finished"};
+    // }
     string winner = "The winner is ";
     if (this->p1.cardesTaken() > this->p2.cardesTaken())
     {
-        winner += "p1: " + this->p2.getName();
+        winner += "p1: " + this->p1.getName();
     }
     else if (this->p1.cardesTaken() < this->p2.cardesTaken())
     {
         winner += "p2: " + this->p2.getName();
     }
     else
-    {                          // a tie
-        winner = "It's a tie"; // throw error?
+    { // a tie
+        winner = "It's a tie";
+        throw string{winner}; // throw error?
     }
-    cout << winner << endl;
+    std::cout << winner << endl;
 }
-void ariel::Game::printLog() { cout << "GAME LOG:\n" + this->getLog() << endl; }
+void ariel::Game::printLog()
+{
+    if (this->getLog().empty())
+    {
+        throw string{"Game hasn't started"};
+    }
+    std::cout << "GAME LOG:\n" + this->getLog() << endl;
+}
 
 string ariel::Game::getStats()
 {
@@ -100,19 +123,33 @@ string ariel::Game::getStats()
     int p2_wins = totalTurns - draws - p1_wins;
     // counts
     stats += "COUNTS\n";
-    stats += "p1 wins:p2 wins:draws\n";
-    stats += to_string(p1_wins) + "\t" + to_string(p2_wins) + "\t" + to_string(draws);
+    stats += "p1 wins:p2 wins:draws:turns\n";
+    stats += to_string(p1_wins) + "\t" + to_string(p2_wins) + "\t" + to_string(draws) + "\t" + to_string(totalTurns);
 
     // win rates
     stats += "\nWIN RATE:\n";
-    stats += "p1:p2\n";
-    stats += to_string((float)(p1_wins / totalTurns)) + "\t" + to_string((float)(p2_wins / totalTurns));
+    stats += "p1 rate:p2 rate\n";
+    double p1_rate = (p1_wins + 0.0) / (totalTurns + 0.0);
+    double p2_rate = (p2_wins + 0.0) / (totalTurns + 0.0);
+    stats += to_string(p1_rate) + "\t" + to_string(p2_rate);
 
     // draw rates
     stats += "\nDRAW RATE: ";
-    stats += to_string((float)(draws / totalTurns));
+    double draw_rate = (draws + 0.0) / (totalTurns + 0.0);
+    stats += to_string(draw_rate);
 
     return stats;
 }
 
-void ariel::Game::printStats() { cout << this->getStats() << endl; }
+void ariel::Game::printStats()
+{
+    if (this->getLog().empty())
+    {
+        throw string{"Game hasn't started"};
+    }
+    // if (!(this->isFinished()))
+    // {
+    //     throw string{"Game hasn't finished"};
+    // }
+    std::cout << this->getStats() << endl;
+}
