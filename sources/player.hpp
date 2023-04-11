@@ -47,10 +47,11 @@ namespace ariel
 
         Card takeOutCard(vector<Card> &cardStack, unsigned int turn)
         {
-            stack_size-=1;  
+            updateStack(); 
             size_t index = turn + deck;
             return cardStack.at(index);
         }
+        void updateStack(){stack_size-=1;}
         string moveDesc(Card &card);
     };
 }

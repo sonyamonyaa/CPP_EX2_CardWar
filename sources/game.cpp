@@ -30,6 +30,10 @@ void ariel::Game::playTurn()
 {
     if (this->isFinished())
         throwFinished();
+    //check same player
+    if (&this->p1 == & this->p2)
+        throw string{"same player"};
+    
     int turn = this->getCurrTurn();
     int move = 0;
     int win_deck = 0;
@@ -39,22 +43,26 @@ void ariel::Game::playTurn()
     move++;
     while (res == Moves::draw && (move + this->getMoves()) < MAX_MOVE)
     {
-        curr_log += "\nDraw \n";
-        win_deck += 2;
+        curr_log += "\nDraw, both players put down hidden card\n";
+        //hide next card
+        this->p1.updateStack();
+        this->p2.updateStack();
         this->setDrawCount();
-        move++;
+        move += 2; // one card hidden, so next card is taken out
         res = MakeMove((unsigned int)move, curr_log);
     }
+    
+    win_deck += (2*move); //each move adds 2 cards
+    
     if (res == Moves::win)
     { // p1 wins
-        win_deck += 2;
+        
         curr_log += "\np1:" + this->p1.getName() + " wins in " + to_string(move) + " moves\n";
         this->p1.takeCards(win_deck);
-        this->setWinCount(); // win count is for p1. p2 win count is win - draw counts
+        this->setWinCount(); //win count is for p1. p2 win count is win - draw counts
     }
     else if (res == Moves::lose)
     { // p2 wins
-        win_deck += 2;
         curr_log += "\np2:" + this->p2.getName() + " wins in " + to_string(move) + " moves\n";
         this->p2.takeCards(win_deck);
     }
@@ -68,14 +76,11 @@ void ariel::Game::playTurn()
     this->setTurn();
 
     this->setLog(curr_log);
-    // printLastTurn();
 }
 
 void ariel::Game::playAll()
 {
-    if (this->isFinished())
-        throwFinished();
-    while (this->getMoves() < 26)
+    while (!this->isFinished())
         playTurn();
 }
 
@@ -99,7 +104,7 @@ void ariel::Game::printWiner()
     else
     { // a tie
         winner = "It's a tie";
-        throw string{winner}; // throw error?
+        // throw string{winner}; // throw error?
     }
     std::cout << winner << endl;
 }
@@ -127,16 +132,17 @@ string ariel::Game::getStats()
     stats += to_string(p1_wins) + "\t" + to_string(p2_wins) + "\t" + to_string(draws) + "\t" + to_string(totalTurns);
 
     // win rates
-    stats += "\nWIN RATE:\n";
-    stats += "p1 rate:p2 rate\n";
+    stats += "\nRATES:\n";
+    stats += "p1 rate:p2 rate:draw rate\n";
     double p1_rate = (p1_wins + 0.0) / (totalTurns + 0.0);
     double p2_rate = (p2_wins + 0.0) / (totalTurns + 0.0);
-    stats += to_string(p1_rate) + "\t" + to_string(p2_rate);
-
-    // draw rates
-    stats += "\nDRAW RATE: ";
     double draw_rate = (draws + 0.0) / (totalTurns + 0.0);
-    stats += to_string(draw_rate);
+    stats += to_string(p1_rate) + "\t" + to_string(p2_rate) +"\t"+ to_string(draw_rate);
+
+    // stack size
+    stats += "\nCARDS TAKEN:\n";
+    stats += "p1 stack:p2 stack\n";
+    stats += to_string(this->p1.cardesTaken())  + "\t" + to_string(this->p2.cardesTaken());
 
     return stats;
 }
