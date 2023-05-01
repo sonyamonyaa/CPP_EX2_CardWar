@@ -36,7 +36,7 @@ TEST_CASE("Test 2 - Finish Game")
 
     game.playAll();
 
-    CHECK((p1.stacksize() == 0 || p2.stacksize() == 0));
+    CHECK((p1.stacksize() == 0 && p2.stacksize() == 0));
     CHECK((p1.cardesTaken() + p2.cardesTaken() == 52));
     
     //all functions should work
@@ -93,13 +93,10 @@ TEST_CASE("Test 5 - another game") //if a game ends, we should be able to make a
     CHECK_NOTHROW(Game(p1, p2)); // new game should be possible
 
     Game new_game(p1, p2);
+    
     //init should be the same
     CHECK(p1.stacksize() == 26);
     CHECK(p2.stacksize() == 26);
     CHECK(p1.cardesTaken() == 0);
     CHECK(p2.cardesTaken() == 0);  
-}
-
-TEST_CASE("Bonus Test - Expectation"){
-    
 }

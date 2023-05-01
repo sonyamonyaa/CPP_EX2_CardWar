@@ -31,7 +31,7 @@ namespace ariel
         {
             /** the logic here is that each game has its own stack of cards
              *   instead of each player holding one, avoiding the need to split the cards
-             *   each turn will be indexed i, i+1 for p1 and p2 respectfully.
+             *   each turn will be indexed 0+i, 26+i for p1 and p2 respectfully.
              */
             p1.setPlaying(true);
             p2.setPlaying(true);

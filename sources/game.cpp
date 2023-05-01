@@ -30,10 +30,10 @@ void ariel::Game::playTurn()
 {
     if (this->isFinished())
         throwFinished();
-    //check same player
-    if (&this->p1 == & this->p2)
+    // check same player
+    if (&this->p1 == &this->p2)
         throw string{"same player"};
-    
+
     int turn = this->getCurrTurn();
     int move = 0;
     int win_deck = 0;
@@ -44,22 +44,30 @@ void ariel::Game::playTurn()
     while (res == Moves::draw && (move + this->getMoves()) < MAX_MOVE)
     {
         curr_log += "\nDraw, both players put down hidden card\n";
-        //hide next card
+        // hide next card
         this->p1.updateStack();
         this->p2.updateStack();
         this->setDrawCount();
-        move += 2; // one card hidden, so next card is taken out
-        res = MakeMove((unsigned int)move, curr_log);
+        move++;                                    // one card hidden
+        if ((move + this->getMoves()) >= MAX_MOVE) // taking one hidden card could end the game
+            break;
+        
+        // take out the next card
+        if ((move + 1 + this->getMoves()) < MAX_MOVE) // the hidden card might be the last
+        {
+            move++;
+            res = MakeMove((unsigned int)move, curr_log);
+        }
     }
-    
-    win_deck += (2*move); //each move adds 2 cards
-    
+
+    win_deck += (2 * move); // each move adds 2 cards
+
     if (res == Moves::win)
     { // p1 wins
-        
+
         curr_log += "\np1:" + this->p1.getName() + " wins in " + to_string(move) + " moves\n";
         this->p1.takeCards(win_deck);
-        this->setWinCount(); //win count is for p1. p2 win count is win - draw counts
+        this->setWinCount(); // win count is for p1. p2 win count is win - draw counts
     }
     else if (res == Moves::lose)
     { // p2 wins
@@ -104,7 +112,6 @@ void ariel::Game::printWiner()
     else
     { // a tie
         winner = "It's a tie";
-        // throw string{winner}; // throw error?
     }
     std::cout << winner << endl;
 }
@@ -137,12 +144,12 @@ string ariel::Game::getStats()
     double p1_rate = (p1_wins + 0.0) / (totalTurns + 0.0);
     double p2_rate = (p2_wins + 0.0) / (totalTurns + 0.0);
     double draw_rate = (draws + 0.0) / (totalTurns + 0.0);
-    stats += to_string(p1_rate) + "\t" + to_string(p2_rate) +"\t"+ to_string(draw_rate);
+    stats += to_string(p1_rate) + "\t" + to_string(p2_rate) + "\t" + to_string(draw_rate);
 
     // stack size
     stats += "\nCARDS TAKEN:\n";
     stats += "p1 stack:p2 stack\n";
-    stats += to_string(this->p1.cardesTaken())  + "\t" + to_string(this->p2.cardesTaken());
+    stats += to_string(this->p1.cardesTaken()) + "\t" + to_string(this->p2.cardesTaken());
 
     return stats;
 }
